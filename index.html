@@ -455,40 +455,86 @@
 
     <div class="toast" id="toast-message"></div>
 
-    <script>
-        let orderCounter = 1;
-        let currentOrder = {};
+<script>
+    let orderCounter = 1;
+    let currentOrder = {};
+    
+    function updateQuantity(button, change) {
+        const quantityInput = button.parentElement.querySelector('.quantity');
+        const newValue = Math.max(0, parseInt(quantityInput.value) + change);
+        quantityInput.value = newValue;
         
-        function updateQuantity(button, change) {
-            const quantityInput = button.parentElement.querySelector('.quantity');
-            const newValue = Math.max(0, parseInt(quantityInput.value) + change);
-            quantityInput.value = newValue;
-            
-            const menuItem = button.closest('.menu-item');
-            const itemName = menuItem.querySelector('.item-name').textContent;
-            const itemPrice = parseInt(menuItem.querySelector('.item-price').textContent.replace('₹', ''));
-            
-            console.log(`Item: ${itemName}, New Quantity: ${newValue}, Price: ${itemPrice}`);
-            
-            if (newValue > 0) {
-                currentOrder[itemName] = {
-                    quantity: newValue,
-                    price: itemPrice
-                };
-            } else {
-                delete currentOrder[itemName];
-            }
-            
-            updateTotal();
+        const menuItem = button.closest('.menu-item');
+        const itemName = menuItem.querySelector('.item-name').textContent;
+        const itemPrice = parseInt(menuItem.querySelector('.item-price').textContent.replace('₹', ''));
+        
+        console.log(`Item: ${itemName}, New Quantity: ${newValue}, Price: ${itemPrice}`);
+        
+        if (newValue > 0) {
+            currentOrder[itemName] = {
+                quantity: newValue,
+                price: itemPrice
+            };
+        } else {
+            delete currentOrder[itemName];
         }
         
-        function updateTotal() {
-            const total = Object.values(currentOrder).reduce((sum, item) => {
-                return sum + (item.quantity * item.price);
-            }, 0);
-            document.getElementById('cart-total').textContent = total;
-            
-            console.log(`Current Order:`, currentOrder);
-            console.log(`Total: ${total}`);
-        }
-    </script>
+        updateTotal();
+    }
+    
+    function updateTotal() {
+        const total = Object.values(currentOrder).reduce((sum, item) => {
+            return sum + (item.quantity * item.price);
+        }, 0);
+        document.getElementById('cart-total').textContent = total;
+        
+        console.log(`Current Order:`, currentOrder);
+        console.log(`Total: ${total}`);
+    }
+
+    function submitOrder() {
+        const pendingOrdersList = document.querySelector('.pending-orders-list');
+        const orderId = `order-${orderCounter++}`;
+        const orderItems = Object.entries(currentOrder).map(([name, details]) => {
+            return `<div>${name} x ${details.quantity} - ₹${details.price * details.quantity}</div>`;
+        }).join('');
+        
+        const orderElement = document.createElement('div');
+        orderElement.classList.add('pending-order');
+        orderElement.id = orderId;
+        orderElement.innerHTML = `
+            <div>
+                <strong>Order ${orderCounter}</strong>
+                ${orderItems}
+            </div>
+            <button class="order-complete-btn" onclick="completeOrder('${orderId}')">Complete</button>
+        `;
+        
+        pendingOrdersList.appendChild(orderElement);
+        
+        // Reset current order
+        currentOrder = {};
+        updateTotal();
+        
+        // Reset quantities in the menu
+        document.querySelectorAll('.quantity').forEach(input => input.value = 0);
+        
+        showToast('Order placed successfully!');
+    }
+
+    function completeOrder(orderId) {
+        const orderElement = document.getElementById(orderId);
+        orderElement.remove();
+        showToast('Order completed!');
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById('toast-message');
+        toast.textContent = message;
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
+    }
+</script>
+</body>
