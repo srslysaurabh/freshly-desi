@@ -395,7 +395,7 @@
                 <div class="menu-item">
                     <div class="item-details">
                         <div class="item-name">Ragi Milk</div>
-                        <div class="item-price">₹55</div>
+                        <div class="item-price">₹5</div>
                     </div>
                     <div class="quantity-control">
                         <button class="qty-btn" onclick="updateQuantity(this, -1)">-</button>
@@ -468,6 +468,8 @@
             const itemName = menuItem.querySelector('.item-name').textContent;
             const itemPrice = parseInt(menuItem.querySelector('.item-price').textContent.replace('₹', ''));
             
+            console.log(`Item: ${itemName}, New Quantity: ${newValue}, Price: ${itemPrice}`);
+            
             if (newValue > 0) {
                 currentOrder[itemName] = {
                     quantity: newValue,
@@ -485,4 +487,8 @@
                 return sum + (item.quantity * item.price);
             }, 0);
             document.getElementById('cart-total').textContent = total;
+            
+            console.log(`Current Order:`, currentOrder);
+            console.log(`Total: ${total}`);
         }
+    </script>
