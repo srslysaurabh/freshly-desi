@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Freshly Desi</title>
+    <p>Fresh • Local • Delicious</p>
+    <div class="header-info">
+        <div class="date">Date: <span id="current-date"></span></div>
+        <div class="total-completed">Total Sales: ₹<span id="completed-total">0</span></div>
+    </div>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
    
     <style>
@@ -142,7 +147,20 @@
             border: none;
             font-weight: bold;
         }
-
+        .header-info {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        padding: 10px;
+        background: rgba(0,0,0,0.1);
+        border-radius: 5px;
+        font-size: 1.1em;
+    }
+    
+    .date, .total-completed {
+        color: #FFD700;
+        font-weight: bold;
+    }
         .toast {
             position: fixed;
             bottom: 20px;
@@ -577,5 +595,33 @@
                 }
             }
         }
+        let completedTotal = 0;
+    
+    // Add this function to set current date
+    function setCurrentDate() {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = now.toLocaleDateString('en-IN', options);
+    }
+    
+    // Update completeOrder function
+    function completeOrder(orderId) {
+        const orderElement = document.getElementById(orderId);
+        // Extract order total from the order element
+        const orderText = orderElement.innerHTML;
+        const amounts = orderText.match(/₹(\d+)/g);
+        if (amounts) {
+            const orderTotal = amounts.reduce((sum, amount) => {
+                return sum + parseInt(amount.replace('₹', ''));
+            }, 0);
+            completedTotal += orderTotal;
+            document.getElementById('completed-total').textContent = completedTotal;
+        }
+        orderElement.remove();
+        showToast('Order completed!');
+    }
+    
+    // Call setCurrentDate when page loads
+    document.addEventListener('DOMContentLoaded', setCurrentDate);
 </script>
 </body>
