@@ -159,6 +159,17 @@
             padding: 10px;
             color: #666;
         }
+        .fullscreen-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
@@ -166,7 +177,7 @@
         <h1>Freshly Desi</h1>
         <p>Fresh • Local • Delicious</p>
     </header>
-
+    <button class="fullscreen-btn" onclick="toggleFullScreen()">Toggle Full Screen</button>
     <div class="container">
         <div class="menu-section">
             <div class="category">
@@ -536,5 +547,14 @@
             toast.style.display = 'none';
         }, 3000);
     }
+    function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
 </script>
 </body>
